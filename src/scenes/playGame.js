@@ -43,15 +43,14 @@ export class playGame extends Phaser.Scene {
     }
     // init Board End
 
-    // this.input.on('pointerup', this.handlePointerUp, this);
-    this.input.on('gameobjectdown', this.handlePointerUp);
+    this.input.on('gameobjectdown', this.clickOnTile);
   }
 
   update() {
     // console.log('1');
   }
 
-  handlePointerUp(e, obj) {
+  clickOnTile(e, obj) {
     // const swipeTime = e.upTime - e.downTime;
     // const swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
     // console.log('Movement time:' + swipeTime + ' ms');
