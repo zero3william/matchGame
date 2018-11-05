@@ -7,7 +7,6 @@ export const iconArr = [
   'potato',
   'vegetable'
 ];
-
 export class loading extends Phaser.Scene {
   constructor() {
     super('loading');

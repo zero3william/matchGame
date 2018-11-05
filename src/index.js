@@ -6,8 +6,8 @@ export const gameOptions = {
   tileSize: 48,
   tileSpacing: 0,
   boardSize: {
-    rows: 10,
-    cols: 6
+    rows: 5,
+    cols: 5
   },
   dropSpeed: 600,
   dropDelay: 10,
@@ -21,8 +21,9 @@ const w =
 const h = w * gameOptions.aspectRatio;
 
 const gameConfig = {
+  parent: 'gameContainer',
   width: w,
-  height: h,
+  height: w,
   scene: [loading, playGame],
   backgroundColor: 0xecf0f1
 };

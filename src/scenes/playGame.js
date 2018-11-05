@@ -17,12 +17,13 @@ export class playGame extends Phaser.Scene {
           tilePosition.y - game.config.height,
           iconArr[random]
         );
-        tile.setInteractive();
         this.boardArray[i][j] = {
+          rowIndex: i,
+          colIndex: j,
           x: tilePosition.x,
           y: tilePosition.y,
-          image: iconArr[random],
-          tile: tile
+          tile: tile,
+          type: random
         };
         this.tweens.add({
           targets: tile,
@@ -42,25 +43,84 @@ export class playGame extends Phaser.Scene {
       }
     }
     // init Board End
-
-    this.input.on('gameobjectdown', this.clickOnTile);
+    this.input.on('pointerdown', this.touchStartOnTile);
   }
 
-  update() {
-    // console.log('1');
+  touchStartOnTile(e) {
+    const scene = this.scene;
+    let board = scene.getTileByPosition(e.x, e.y);
+    const tile = board.tile;
+
+    // click tile animate
+    scene.tweens.add({
+      targets: tile,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      yoyo: true,
+      duration: 100
+    });
+
+    //drag tile
+    scene.input.on('pointermove', function(e) {
+      const _board = scene.getTileByPosition(e.x, e.y);
+      const _tile = _board.tile;
+      if (tile != _tile) {
+        board.tile = _tile;
+        _board.tile = tile;
+        board = _board;
+        scene.updateBoard();
+      }
+    });
+
+    //pointer leave canvas (drop tile)
+    const ctx = document.getElementById('gameContainer');
+    const onceMouseleave = function() {
+      scene.matchCheck();
+      scene.input.off('pointermove');
+      scene.input.off('pointerup');
+      ctx.removeEventListener('mouseleave', onceMouseleave, false);
+    };
+    ctx.addEventListener('mouseleave', onceMouseleave, false);
+
+    //drop tile
+    scene.input.on('pointerup', function() {
+      scene.matchCheck();
+      scene.input.off('pointermove');
+      scene.input.off('pointerup');
+      ctx.removeEventListener('mouseleave', onceMouseleave, false);
+    });
   }
 
-  clickOnTile(e, obj) {
-    // const swipeTime = e.upTime - e.downTime;
-    // const swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
-    // console.log('Movement time:' + swipeTime + ' ms');
-    // console.log('Horizontal distance: ' + swipe.x + ' pixels');
-    // console.log('Vertical distance: ' + swipe.y + ' pixels');
-    console.log('e.upX', e.upX);
-    console.log('e.upY', e.upY);
-    console.log(obj);
-    // const tile = this.getTileByPosition(e.upX, e.upY);
-    // tile.visible = !tile.visible;
+  matchCheck() {
+    const boardArray = this.boardArray;
+
+    const rowSize = gameOptions.boardSize.row;
+    const colSize = gameOptions.boardSize.col;
+
+    for (let i = 0; i < rowSize; i++) {
+      for (let j = 0; j < colSize; j++) {
+        //todo
+        // const length = scanPos(i, j, boardArray[i][j].type, 0);
+      }
+    }
+  }
+
+  scanPos(row, col, type, length) {
+    //todo
+    return 0;
+  }
+
+  updateBoard() {
+    this.boardArray.forEach(row => {
+      row.forEach(board => {
+        this.tweens.add({
+          targets: board.tile,
+          x: board.x,
+          y: board.y,
+          duration: 100
+        });
+      });
+    });
   }
 
   getTilePosition(row, col) {
@@ -76,9 +136,10 @@ export class playGame extends Phaser.Scene {
   }
 
   getTileByPosition(x, y) {
-    let tile = false;
-    this.boardArray.find(row => {
-      row.find(item => {
+    let rowIndex = false;
+    let colIndex = false;
+    rowIndex = this.boardArray.findIndex(row => {
+      colIndex = row.findIndex(item => {
         if (
           item.y - gameOptions.tileSize * 0.5 > y ||
           item.y + gameOptions.tileSize * 0.5 < y
@@ -89,13 +150,13 @@ export class playGame extends Phaser.Scene {
           item.x - gameOptions.tileSize * 0.5 < x &&
           item.x + gameOptions.tileSize * 0.5 >= x
         ) {
-          tile = item.tile;
+          rowIndex = true;
           return true;
         }
       });
-      return tile;
+      return rowIndex;
     });
-    return tile;
+    return rowIndex === false ? false : this.boardArray[rowIndex][colIndex];
   }
 
   getRandom(max, min = 0) {
