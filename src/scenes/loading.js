@@ -1,11 +1,11 @@
 export const iconArr = [
   'egg',
   'fish',
-  'meat',
-  'watermelon',
-  'grape',
-  'potato',
-  'vegetable'
+  'meat'
+  // 'watermelon',
+  // 'grape',
+  // 'potato'
+  // 'vegetable'
 ];
 export class loading extends Phaser.Scene {
   constructor() {
@@ -19,6 +19,7 @@ export class loading extends Phaser.Scene {
     this.load.image('grape', 'assets/sprites/grape48x48.png');
     this.load.image('potato', 'assets/sprites/potato48x48.png');
     this.load.image('vegetable', 'assets/sprites/vegetable48x48.png');
+    this.load.image('bg', 'assets/sprites/bg.jpg');
   }
   create() {
     this.add.text(100, 100, 'loading ...', { fill: '#0f0' });

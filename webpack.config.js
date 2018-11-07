@@ -3,6 +3,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
+  devServer: {
+    disableHostCheck: true
+  },
   entry: {
     app: './src/index.js',
     'production-dependencies': ['phaser']
