@@ -11,7 +11,6 @@ export class playGame extends Phaser.Scene {
     super('playGame');
   }
   create() {
-    console.log(game);
     this.add
       .image(game.canvas.width / 2, game.canvas.height / 2, 'bg')
       .setScale(gameOptions.boardWidth / 450)
@@ -180,7 +179,6 @@ export class playGame extends Phaser.Scene {
 
           comboText.setText(`${comboTime} combo!!`);
           // comboText.style.fontSize = `${30 + comboTime}px`;
-          console.log(comboText);
 
           //fall all the tile on this matched tile
           for (

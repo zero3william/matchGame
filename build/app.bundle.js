@@ -25,6 +25,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var initScale = 1.1;
 var boardArray = [];
+var comboText = void 0;
+var comboCount = 0;
 
 var playGame = exports.playGame = function (_Phaser$Scene) {
   _inherits(playGame, _Phaser$Scene);
@@ -38,8 +40,16 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
   _createClass(playGame, [{
     key: 'create',
     value: function create() {
+      console.log(_index.game);
+      this.add.image(_index.game.canvas.width / 2, _index.game.canvas.height / 2, 'bg').setScale(_index.gameOptions.boardWidth / 450).setAlpha(0.2);
+
       this.initBoard();
       this.canMove = true;
+
+      comboText = this.add.text(_index.gameOptions.offsetX + 30, (_index.game.canvas.height - _index.gameOptions.boardWidth * _index.gameOptions.aspectRatio) / 2 + 50, '', {
+        fontSize: '20px',
+        fill: '#000'
+      });
 
       //listen event
       this.input.on('gameobjectdown', this.touchStartOnTile);
@@ -155,9 +165,13 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
       }
       if (isMatched) {
         //start Tween
+        comboText.visible = true;
         this.matchTween(boardArray, scene, comboTime);
       } else {
         //end Tween , continue game
+        setTimeout(function () {
+          comboText.visible = false;
+        }, 1000);
         scene.canMove = true;
       }
     }
@@ -178,6 +192,11 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
               scaleY: 0,
               duration: _index.gameOptions.dropSpeed
             });
+
+            comboText.setText(comboTime + ' combo!!');
+            // comboText.style.fontSize = `${30 + comboTime}px`;
+            console.log(comboText);
+
             //fall all the tile on this matched tile
             for (var k = i; k > 0 && boardArray[k - 1][j].tile.active !== false; k--) {
               boardArray[k][j].tile = boardArray[k - 1][j].tile;
@@ -264,10 +283,9 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
     value: function getTilePosition(row, col) {
       var posX = _index.gameOptions.tileSpacing * (col + 1) + _index.gameOptions.tileSize * (col + 0.5);
       var posY = _index.gameOptions.tileSpacing * (row + 1) + _index.gameOptions.tileSize * (row + 0.5);
-      var boardHeight = _index.gameOptions.boardSize.rows * _index.gameOptions.tileSize;
-      boardHeight += (_index.gameOptions.boardSize.rows + 1) * _index.gameOptions.tileSpacing;
-      var offsetY = _index.game.config.height - boardHeight;
-      posY += offsetY;
+
+      posX += _index.gameOptions.offsetX;
+      posY += _index.gameOptions.offsetY;
       return new Phaser.Geom.Point(posX, posY);
     }
   }, {
@@ -320,28 +338,48 @@ var _loading = __webpack_require__(467);
 
 var _playGame = __webpack_require__(1149);
 
-var gameOptions = exports.gameOptions = {
-  tileSize: 48,
-  tileSpacing: 0,
-  boardSize: {
-    rows: 5,
-    cols: 5
-  },
-  dropSpeed: 300,
-  dropDelay: 10,
-  aspectRatio: 16 / 9
-};
+//參數設定區
+var w = window.innerWidth; //canvas width
+var h = window.innerHeight; //canvas height
 
-var w = gameOptions.boardSize.cols * (gameOptions.tileSize + gameOptions.tileSpacing) + gameOptions.tileSpacing;
-var h = w * gameOptions.aspectRatio;
+var rows = 5; //遊戲主板列數
+var cols = 6; //遊戲主板行數
+var tileSize = 48; //元素大小
+var tileSpacing = 0; //元素間隔
+var dropSpeed = 300; //掉落速度
+var dropDelay = 10; //初始元素掉落間隔時間
+var backgroundColor = 0xecf0f1; //預設背景顏色
+
+var aspectRatio = 16 / 9; //總版面寬高比
+var boardWidth = cols * (tileSize + tileSpacing) + tileSpacing; //元素版面寬
+var offsetX = (w - boardWidth) / 2; //元素x軸掉落位置
+var boardHeight = rows * (tileSize + tileSpacing) + tileSpacing; //元素版面高
+var offsetY = (h + boardWidth * aspectRatio) / 2 - boardHeight; //元素y軸掉落位置
+
+var gameOptions = exports.gameOptions = {
+  tileSize: tileSize,
+  tileSpacing: tileSpacing,
+  boardSize: {
+    rows: rows,
+    cols: cols
+  },
+  dropSpeed: dropSpeed,
+  dropDelay: dropDelay,
+  boardWidth: boardWidth,
+  boardHeight: boardHeight,
+  offsetX: offsetX,
+  offsetY: offsetY,
+  aspectRatio: aspectRatio
+};
 
 var gameConfig = {
   parent: 'gameContainer',
   width: w,
   height: h,
   scene: [_loading.loading, _playGame.playGame],
-  backgroundColor: 0xecf0f1
+  backgroundColor: backgroundColor
 };
+
 var game = exports.game = new Phaser.Game(gameConfig);
 
 /***/ }),
@@ -364,8 +402,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var iconArr = exports.iconArr = ['egg', 'fish', 'meat', 'watermelon'
-// 'grape'
+var iconArr = exports.iconArr = ['egg', 'fish', 'meat'
+// 'watermelon',
+// 'grape',
 // 'potato'
 // 'vegetable'
 ];
@@ -389,6 +428,7 @@ var loading = exports.loading = function (_Phaser$Scene) {
       this.load.image('grape', 'assets/sprites/grape48x48.png');
       this.load.image('potato', 'assets/sprites/potato48x48.png');
       this.load.image('vegetable', 'assets/sprites/vegetable48x48.png');
+      this.load.image('bg', 'assets/sprites/bg.jpg');
     }
   }, {
     key: 'create',
