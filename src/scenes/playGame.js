@@ -14,7 +14,7 @@ export class playGame extends Phaser.Scene {
     console.log(game);
     this.add
       .image(game.canvas.width / 2, game.canvas.height / 2, 'bg')
-      .setScale(gameOptions.boardWidth / 900)
+      .setScale(gameOptions.boardWidth / 450)
       .setAlpha(0.2);
 
     this.initBoard();
