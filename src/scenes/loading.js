@@ -4,7 +4,7 @@ export const iconArr = [
   'meat'
   // 'watermelon',
   // 'grape',
-  // 'potato'
+  // 'potato',
   // 'vegetable'
 ];
 export class loading extends Phaser.Scene {

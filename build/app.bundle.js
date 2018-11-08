@@ -40,7 +40,6 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
   _createClass(playGame, [{
     key: 'create',
     value: function create() {
-      console.log(_index.game);
       this.add.image(_index.game.canvas.width / 2, _index.game.canvas.height / 2, 'bg').setScale(_index.gameOptions.boardWidth / 450).setAlpha(0.2);
 
       this.initBoard();
@@ -195,7 +194,6 @@ var playGame = exports.playGame = function (_Phaser$Scene) {
 
             comboText.setText(comboTime + ' combo!!');
             // comboText.style.fontSize = `${30 + comboTime}px`;
-            console.log(comboText);
 
             //fall all the tile on this matched tile
             for (var k = i; k > 0 && boardArray[k - 1][j].tile.active !== false; k--) {
